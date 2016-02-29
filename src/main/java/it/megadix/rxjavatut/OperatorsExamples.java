@@ -78,6 +78,10 @@ public class OperatorsExamples {
                     subscriber.onNext(i);
                     randomSleep(maxSleep);
                 }
+
+                if (!subscriber.isUnsubscribed()) {
+                    subscriber.onCompleted();
+                }
             }).start();
         });
 
@@ -91,6 +95,10 @@ public class OperatorsExamples {
                     }
                     subscriber.onNext((char) (i + 97));
                     randomSleep(maxSleep);
+                }
+
+                if (!subscriber.isUnsubscribed()) {
+                    subscriber.onCompleted();
                 }
             }).start();
         });
