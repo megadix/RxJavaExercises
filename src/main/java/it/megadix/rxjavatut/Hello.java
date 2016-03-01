@@ -26,5 +26,11 @@ public class Hello {
             System.out.println(name);
         });
 
+        System.out.println("\nUsing method reference:");
+
+        Observable.from(names).subscribe(
+                System.out::println
+        );
+
     }
 }

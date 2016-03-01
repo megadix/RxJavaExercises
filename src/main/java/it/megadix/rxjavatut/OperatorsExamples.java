@@ -1,17 +1,16 @@
 package it.megadix.rxjavatut;
 
+import rx.Observable;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
 
-import rx.Observable;
+import static it.megadix.rxjavatut.Utils.*;
 
 public class OperatorsExamples {
 
-    Random rand = new Random();
-
-    OperatorsExamples example_skip_take_map_reduce() {
+    private OperatorsExamples example_skip_take_map_reduce() {
 
         System.out.println("Example: from(), skip(), take(), map(), reduce()");
 
@@ -26,14 +25,15 @@ public class OperatorsExamples {
                 .take(5)
                 .map(item -> item * 2)
                 .reduce((a, b) -> a + b)
-                .subscribe(item -> {
-                    System.out.println(item);
-                });
+                .subscribe(
+                        System.out::println,
+                        logError,
+                        logFinished);
 
         return this;
     }
 
-    OperatorsExamples example_flatMap() {
+    private OperatorsExamples example_flatMap() {
 
         System.out.println("Example: from(), flatMap(), map()");
 
@@ -44,71 +44,71 @@ public class OperatorsExamples {
         }
 
         Observable.from(items)
-                .flatMap(item -> Observable.from(item))
+                .flatMap(Observable::from)
                 .map(subItem -> "(" + subItem + ")")
-                .subscribe(mappedItem -> {
-                    System.out.println(mappedItem);
-                });
+                .subscribe(
+                        System.out::println,
+                        logError,
+                        logFinished);
 
         return this;
     }
 
-    void randomSleep(long max) {
-        try {
-            Thread.sleep((long) (rand.nextDouble() * max));
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
 
-    OperatorsExamples example_merge() {
+    private OperatorsExamples example_merge() {
 
         System.out.println("Example: merge()");
 
-        long maxSleep = 1000;
+        long maxSleep = 300;
 
         // Observable 1
 
-        Observable numbers = Observable.create(subscriber -> {
-            new Thread(() -> {
-                for (int i = 0; i < 10; i++) {
-                    if (subscriber.isUnsubscribed()) {
-                        return;
+        Observable<Integer> numbers = Observable.create(subscriber ->
+                new Thread(() -> {
+                    for (int i = 0; i < 10; i++) {
+                        if (subscriber.isUnsubscribed()) {
+                            return;
+                        }
+                        subscriber.onNext(i);
+                        randomSleep(maxSleep);
                     }
-                    subscriber.onNext(i);
-                    randomSleep(maxSleep);
-                }
 
-                if (!subscriber.isUnsubscribed()) {
-                    subscriber.onCompleted();
-                }
-            }).start();
-        });
+                    if (!subscriber.isUnsubscribed()) {
+                        subscriber.onCompleted();
+                    }
+                }).start()
+        );
 
         // Observable 2
 
-        Observable letters = Observable.create(subscriber -> {
-            new Thread(() -> {
-                for (int i = 0; i < 10; i++) {
-                    if (subscriber.isUnsubscribed()) {
-                        return;
+        Observable<Character> letters = Observable.create(subscriber ->
+                new Thread(() -> {
+                    for (int i = 0; i < 10; i++) {
+                        if (subscriber.isUnsubscribed()) {
+                            return;
+                        }
+                        subscriber.onNext((char) (i + 97));
+                        randomSleep(maxSleep);
                     }
-                    subscriber.onNext((char) (i + 97));
-                    randomSleep(maxSleep);
-                }
 
-                if (!subscriber.isUnsubscribed()) {
-                    subscriber.onCompleted();
-                }
-            }).start();
-        });
+                    if (!subscriber.isUnsubscribed()) {
+                        subscriber.onCompleted();
+                    }
+                }).start()
+        );
+
+        // output of both observers is interleaved, i.e. depends on order of arrival
 
         Observable
                 .merge(numbers, letters)
-                .subscribe(item -> {
-                    System.out.print(item);
-                    System.out.print("...");
-                });
+                .subscribe(
+                        item -> {
+                            System.out.print(item);
+                            System.out.print("...");
+                        },
+                        logError,
+                        logFinished
+                );
 
         return this;
     }
