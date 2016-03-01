@@ -48,13 +48,12 @@ public class ErrorHandling {
                 latch::countDown);
 
         latch.await();
-
         sleep(1000);
 
         return this;
     }
 
-    private ErrorHandling example_onErrorReturn() {
+    private ErrorHandling example_onErrorReturn() throws InterruptedException {
         System.out.println("example_onErrorReturn()");
 
         CountDownLatch latch = new CountDownLatch(1);
@@ -71,6 +70,7 @@ public class ErrorHandling {
                         },
                         latch::countDown);
 
+        latch.await();
         sleep(1000);
 
         return this;
