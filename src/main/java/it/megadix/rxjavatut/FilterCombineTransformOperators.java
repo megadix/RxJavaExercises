@@ -1,7 +1,6 @@
 package it.megadix.rxjavatut;
 
 import rx.Observable;
-import rx.functions.Func1;
 
 import java.util.ArrayList;
 import java.util.List;

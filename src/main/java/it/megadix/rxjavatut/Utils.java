@@ -22,6 +22,7 @@ public class Utils {
 
     /**
      * Sleep the specified number of milliseconds, logging to stderr in case of InterruptedException
+     *
      * @param millis number of milliseconds to sleep
      */
     public static void sleep(long millis) {
@@ -34,6 +35,7 @@ public class Utils {
 
     /**
      * Random sleep, uses {@link #sleep sleep()}
+     *
      * @param max maximum number of milliseconds to sleep
      */
     public static void randomSleep(long max) {

@@ -1,10 +1,10 @@
 package it.megadix.rxjavatut;
 
-import java.util.Arrays;
-import java.util.List;
-
 import rx.Observable;
 import rx.functions.Action1;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class Hello {
 
