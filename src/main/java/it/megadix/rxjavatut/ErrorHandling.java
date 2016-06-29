@@ -33,7 +33,8 @@ public class ErrorHandling {
     }
 
     private ErrorHandling example_onErrorStop() throws InterruptedException {
-        System.out.println("example_onErrorStop()");
+        System.out.println("------------------------------------------");
+        System.out.println("On error: log exception and stop");
 
         CountDownLatch latch = new CountDownLatch(1);
 
@@ -41,7 +42,7 @@ public class ErrorHandling {
 
         observable.subscribe(
                 System.out::println,
-                (throwable) -> {
+                throwable -> {
                     logError.call(throwable);
                     latch.countDown();
                 },
@@ -54,17 +55,18 @@ public class ErrorHandling {
     }
 
     private ErrorHandling example_onErrorReturn() throws InterruptedException {
-        System.out.println("example_onErrorReturn()");
+        System.out.println("------------------------------------------");
+        System.out.println("On error: emit special value and stop");
 
         CountDownLatch latch = new CountDownLatch(1);
 
         Observable<Object> observable = createSampleObservable();
 
         observable
-                .onErrorReturn(Throwable::getMessage)
+                .onErrorReturn(throwable -> "Special Value, error message was: " + throwable.getMessage())
                 .subscribe(
                         System.out::println,
-                        (throwable) -> {
+                        throwable -> {
                             logError.call(throwable);
                             latch.countDown();
                         },
@@ -77,7 +79,8 @@ public class ErrorHandling {
     }
 
     private ErrorHandling example_onExceptionResumeNext() {
-        System.out.println("example_onExceptionResumeNext()");
+        System.out.println("------------------------------------------");
+        System.out.println("On error: switch control to another Observable");
 
         CountDownLatch latch = new CountDownLatch(1);
 
@@ -88,7 +91,7 @@ public class ErrorHandling {
                 .onExceptionResumeNext(observable2)
                 .subscribe(
                         System.out::println,
-                        (throwable) -> {
+                        throwable -> {
                             logError.call(throwable);
                             latch.countDown();
                         },
